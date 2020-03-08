@@ -1,5 +1,4 @@
 # FHIRGateway
-# HealthStorage
 ##  Introduction
 This is a gaetway service to sit in front of FHIR servers that do not support Open ID connect. This server will check that JWT tokens are valid and have the relvant claims as per the configuration. This service will also record the access in an audit log. This service was built to support secure connectivity as part of the the Somerset Integrated Digital Electronic Record (SIDeR), more details can be found here: https://github.com/Somerset-SIDeR-Programme
 
