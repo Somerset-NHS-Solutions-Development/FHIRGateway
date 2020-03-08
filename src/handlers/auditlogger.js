@@ -26,7 +26,7 @@ const dailyRotateFileTransport = new transports.DailyRotateFile({
 
 const logger = createLogger({
   // change level if in dev environment versus production
-  level: process.env.LogLevel,
+  level: 'info',
   format: format.combine(
     // format.label({ label: path.basename(process.mainModule.filename) }),
 	format.label({ label: path.basename(process.mainModule.filename) }),

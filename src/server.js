@@ -7,6 +7,7 @@ const logger = require('./handlers/logger');
 const express = require('express');
 const server = express();
 const router = express.Router();
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -37,7 +38,7 @@ if(process.env.corsEnabled.toLowerCase() === 'true'){
 
 
 // Middleware
-
+server.use(helmet());
 server.use(cors(corsOptions));
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: false}));
