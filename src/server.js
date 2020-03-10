@@ -16,15 +16,14 @@ let corsOptions = {};
 if(process.env.corsEnabled.toLowerCase() === 'true'){
 	const whitelist = [];
 	if((process.env.allowedOrigins).includes(',')) {
-		(process.env.allowedOrigins).split(',').forEach(function (item) {
+		(process.env.allowedOrigins).split(',').forEach((item) => {
 			whitelist.push(item.trim());
 		});
 	} else {
 		whitelist.push(process.env.allowedOrigins);
 	}
-	// console.log(whitelist)
 	corsOptions = {
-	  origin: function (origin, callback) {
+	  origin: (origin, callback) => {
 		if (whitelist.indexOf(origin) !== -1) {
 			callback(null, true);
 		} else {
