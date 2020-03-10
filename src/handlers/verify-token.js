@@ -56,10 +56,10 @@ module.exports = async (req, res, next) => {
 					}
 				}
 				if(found === 0) {
-					throw new Error('Roles not found'+JSON.stringify(vdecoded));
+					throw new Error(`Roles not found: ${JSON.stringify(vdecoded)}`);
 				}
 				
-				audit.info('Audit Success: '+JSON.stringify(vdecoded));
+				audit.info(`Audit Success: ${JSON.stringify(vdecoded)}`);
 			});
         next();
 		} else {
@@ -67,7 +67,7 @@ module.exports = async (req, res, next) => {
 		}
         
     } catch (err) {
-		audit.error('Audit Failure: '+err);
+		audit.error(`Audit Failure: ${err}`);
 		logger.error(err);
         res.status(401).json({
 			message: "Authorisation failed."
