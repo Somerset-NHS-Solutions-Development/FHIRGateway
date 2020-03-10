@@ -8,7 +8,7 @@ const verifyToken = require('./verify-token');
 const logger = require('./logger');
 
 
-// Asynch Middleware
+// Async Middleware
 const asyncMiddleware = fn => (req, res, next) => {
     Promise.resolve(fn(req, res, next))
         .catch(next);
