@@ -3,8 +3,6 @@ const router = express.Router()
 const request = require("request");
 
 const jwt = require('jsonwebtoken')
-const verifyToken = require('./verify-token');
-
 
 router.post('/login', (req, res) => {
 
