@@ -50,11 +50,9 @@ module.exports = async (req, res, next) => {
 							found = 1;
 						}
 					});
-				} else {
-					if(req.userAccess.indexOf(AccessRolesAllowed.trim()) !== -1){
+				} else if(req.userAccess.indexOf(AccessRolesAllowed.trim()) !== -1){
 							found = 1;
 					}
-				}
 				if(found === 0) {
 					throw new Error(`Roles not found: ${JSON.stringify(vdecoded)}`);
 				}
