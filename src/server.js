@@ -52,6 +52,6 @@ server.use('/', fhir);
 
 
 server.listen(process.env.listenOn, () => {
-		logger.info('Platform: '+process.platform);
-		logger.info('Listening on port '+process.env.listenOn);
+		logger.info(`Platform: ${process.platform}`);
+		logger.info(`Listening on port ${process.env.listenOn}`);
 	});
