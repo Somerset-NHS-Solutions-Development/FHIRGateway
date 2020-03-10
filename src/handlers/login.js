@@ -2,14 +2,11 @@ const express = require('express');
 const router = express.Router()
 const request = require("request");
 
-const jwt = require('jsonwebtoken')
-
 router.post('/login', (req, res) => {
 
     const user = req.body;
     const username = user.username;
     const password = user.password;
-    // console.log(user);
     const options = {
         method: 'POST',
         url: (process.env.openIDDirectAccessEnpoint),
@@ -26,11 +23,7 @@ router.post('/login', (req, res) => {
     request(options, (error, response, body) => {
         if (error) throw new Error(error);
 
-        const json = (JSON.parse(body));
-        const fred = jwt.decode(json.access_token);       
-            
-		// console.log(fred);
-		
+        const json = (JSON.parse(body));		
 		res.status(200).json(json);
 
     });
