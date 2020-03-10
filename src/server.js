@@ -14,7 +14,7 @@ const logger = require('./handlers/logger');
 // Setup CORS
 let corsOptions = {};
 if(process.env.corsEnabled.toLowerCase() === 'true'){
-	let whitelist = [];
+	const whitelist = [];
 	if((process.env.allowedOrigins).includes(',')) {
 		(process.env.allowedOrigins).split(',').forEach(function (item) {
 			whitelist.push(item.trim());
