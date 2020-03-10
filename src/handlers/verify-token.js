@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 
 // Set Up Logging
 const audit = require('./auditlogger.js');
 const logger = require('./logger.js');
 // Verify using getKey callback
 // Uses https://github.com/auth0/node-jwks-rsa as a way to fetch the keys.
-const jwksClient = require('jwks-rsa');
 
 
 async function getSigningKey(token) {	

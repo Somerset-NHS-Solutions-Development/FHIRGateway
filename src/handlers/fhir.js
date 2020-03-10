@@ -1,8 +1,8 @@
-const verifyToken = require('./verify-token');
 const express = require('express');
 
 const router = express.Router()
 const rp = require('request-promise');
+const verifyToken = require('./verify-token');
 
 // Set Up Logging
 const logger = require('./logger');
