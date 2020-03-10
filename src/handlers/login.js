@@ -25,7 +25,7 @@ router.post('/login', (req, res) => {
         }
     };
 
-    request(options, function (error, response, body) {
+    request(options, (error, response, body) => {
         if (error) throw new Error(error);
 
         const json = (JSON.parse(body));
