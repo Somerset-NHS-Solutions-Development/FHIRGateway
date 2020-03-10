@@ -25,7 +25,6 @@ if(process.env.corsEnabled.toLowerCase() === 'true'){
 	// console.log(whitelist)
 	corsOptions = {
 	  origin: function (origin, callback) {
-		// console.log(origin);
 		if (whitelist.indexOf(origin) !== -1) {
 			callback(null, true);
 		} else {
@@ -56,7 +55,4 @@ server.use('/', fhir);
 server.listen(process.env.listenOn, () => {
 		logger.info('Platform: '+process.platform);
 		logger.info('Listening on port '+process.env.listenOn);
-		
-		// console.log('Platform: '+process.platform);
-		// console.log('Listening on port '+process.env.listenOn);
-	})    
+	});
