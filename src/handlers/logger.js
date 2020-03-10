@@ -10,8 +10,6 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-const filename = path.join(logDir, 'server.log');
-
 const dailyRotateFileTransport = new transports.DailyRotateFile({
   filename: `${logDir}/%DATE%-server.log`,
   datePattern: 'YYYY-MM-DD',
@@ -27,7 +25,6 @@ const logger = createLogger({
   // change level if in dev environment versus production
   level: process.env.LogLevel,
   format: format.combine(
-    // format.label({ label: path.basename(process.mainModule.filename) }),
 	format.label({ label: path.basename(process.mainModule.filename) }),
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })
   ),

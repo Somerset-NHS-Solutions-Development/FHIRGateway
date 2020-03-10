@@ -1,31 +1,29 @@
 require('custom-env').env('development');
 
-// Set Up Logging
-const logger = require('./handlers/logger');
-
 // Express HTTP server
 const express = require('express');
+
 const server = express();
-const router = express.Router();
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-//Setup CORS
+// Set Up Logging
+const logger = require('./handlers/logger');
+
+// Setup CORS
 let corsOptions = {};
 if(process.env.corsEnabled.toLowerCase() === 'true'){
-	let whitelist = [];
+	const whitelist = [];
 	if((process.env.allowedOrigins).includes(',')) {
-		(process.env.allowedOrigins).split(',').forEach(function (item) {
+		(process.env.allowedOrigins).split(',').forEach((item) => {
 			whitelist.push(item.trim());
 		});
 	} else {
 		whitelist.push(process.env.allowedOrigins);
 	}
-	// console.log(whitelist)
 	corsOptions = {
-	  origin: function (origin, callback) {
-		// console.log(origin);
+	  origin: (origin, callback) => {
 		if (whitelist.indexOf(origin) !== -1) {
 			callback(null, true);
 		} else {
@@ -54,9 +52,6 @@ server.use('/', fhir);
 
 
 server.listen(process.env.listenOn, () => {
-		logger.info('Platform: '+process.platform);
-		logger.info('Listening on port '+process.env.listenOn);
-		
-		// console.log('Platform: '+process.platform);
-		// console.log('Listening on port '+process.env.listenOn);
-	})    
+		logger.info(`Platform: ${process.platform}`);
+		logger.info(`Listening on port ${process.env.listenOn}`);
+	});

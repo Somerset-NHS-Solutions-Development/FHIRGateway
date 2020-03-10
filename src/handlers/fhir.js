@@ -1,13 +1,14 @@
-const verifyToken = require('./verify-token');
 const express = require('express');
+
 const router = express.Router()
 const rp = require('request-promise');
+const verifyToken = require('./verify-token');
 
 // Set Up Logging
 const logger = require('./logger');
 
 
-// Asynch Middleware
+// Async Middleware
 const asyncMiddleware = fn => (req, res, next) => {
     Promise.resolve(fn(req, res, next))
         .catch(next);
@@ -17,8 +18,8 @@ const asyncMiddleware = fn => (req, res, next) => {
 // Functions
 
 function getFhirResponseFunc(path = '/', queryString) {
-	logger.debug('Request being forwarded to '+process.env.FHIRServerBaseURL+path);
-	logger.debug('Request query parameters: '+JSON.stringify(queryString));
+	logger.debug(`Request being forwarded to ${process.env.FHIRServerBaseURL}${path}`);
+	logger.debug(`Request query parameters: ${JSON.stringify(queryString)}`);
 	const options = {
 		uri: process.env.FHIRServerBaseURL+path,
 		qs: queryString,
@@ -33,8 +34,8 @@ function getFhirResponseFunc(path = '/', queryString) {
 
 const getFhirResponse = async (req,res,next) => {
 	logger.debug('New request');
-	logger.debug('Request path: '+JSON.stringify(req.path));
-	logger.debug('Request query parameters: '+JSON.stringify(req.query));	
+	logger.debug(`Request path: ${JSON.stringify(req.path)}`);
+	logger.debug(`Request query parameters: ${JSON.stringify(req.query)}`);	
 	const response = await getFhirResponseFunc(req.path,req.query)
 	res.end(response); 	
 	next;

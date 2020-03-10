@@ -1,6 +1,6 @@
 # FHIRGateway
 ##  Introduction
-This is a gaetway service to sit in front of FHIR servers that do not support Open ID connect. This server will check that JWT tokens are valid and have the relevant claims as per the configuration. This service will also record the access in an audit log. This service was built to support secure connectivity as part of the the Somerset Integrated Digital Electronic Record (SIDeR), more details can be found here: https://github.com/Somerset-SIDeR-Programme
+This is a gateway service to sit in front of FHIR servers that do not support Open ID connect. This server will check that JWT tokens are valid and have the relevant claims as per the configuration. This service will also record the access in an audit log. This service was built to support secure connectivity as part of the Somerset Integrated Digital Electronic Record (SIDeR), more details can be found here: https://github.com/Somerset-SIDeR-Programme
 
 ## Limitations
 This service does not check or validate the FHIR request is valid, this is handled by the downstream server.
