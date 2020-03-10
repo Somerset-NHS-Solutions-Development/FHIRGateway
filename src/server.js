@@ -5,8 +5,8 @@ const logger = require('./handlers/logger');
 
 // Express HTTP server
 const express = require('express');
+
 const server = express();
-const router = express.Router();
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cors = require('cors');
