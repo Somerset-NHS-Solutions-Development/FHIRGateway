@@ -32,13 +32,12 @@ function getFhirResponseFunc(path = '/', queryString) {
 	return rp(options)
 }
 
-const getFhirResponse = async (req,res,next) => {
+const getFhirResponse = async (req, res) => {
 	logger.debug('New request');
 	logger.debug(`Request path: ${JSON.stringify(req.path)}`);
 	logger.debug(`Request query parameters: ${JSON.stringify(req.query)}`);	
 	const response = await getFhirResponseFunc(req.path,req.query)
-	res.end(response); 	
-	next;
+	res.end(response); 
 }
 
 
