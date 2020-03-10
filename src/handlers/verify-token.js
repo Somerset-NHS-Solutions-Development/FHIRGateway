@@ -73,7 +73,6 @@ module.exports = async (req, res, next) => {
 			message: "Authorisation failed."
 		});
 		res.end();
-		return;
     }
 }
 
