@@ -1,8 +1,5 @@
 require('custom-env').env('development');
 
-// Set Up Logging
-const logger = require('./handlers/logger');
-
 // Express HTTP server
 const express = require('express');
 
@@ -11,7 +8,10 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-//Setup CORS
+// Set Up Logging
+const logger = require('./handlers/logger');
+
+// Setup CORS
 let corsOptions = {};
 if(process.env.corsEnabled.toLowerCase() === 'true'){
 	let whitelist = [];
