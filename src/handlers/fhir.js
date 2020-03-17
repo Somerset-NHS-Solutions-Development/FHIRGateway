@@ -24,12 +24,26 @@ function getFhirResponseFunc(path = '/', queryString) {
 		uri: process.env.FHIRServerBaseURL+path,
 		qs: queryString,
 		headers: {
-			// "Authorization" : auth,
-			'User-Agent': 'FHIR-Proxy'
-			
+			'User-Agent': 'FHIR-Proxy'			
 		}
 	};
-	return rp(options)
+	const errors = require('request-promise/errors');
+	return rp(options).then((response) => {
+			return response;
+		}
+	)
+	.catch(errors.StatusCodeError, function (reason) {
+        // The server responded with a status codes other than 2xx.
+        // Check reason.statusCode
+		logger.error(JSON.stringify(reason));
+    })
+    .catch(errors.RequestError, function (reason) {
+        // The request failed due to technical reasons.
+        // reason.cause is the Error object Request would pass into a callback.
+		logger.error(JSON.stringify(reason));
+    });
+	
+	
 }
 
 const getFhirResponse = async (req, res) => {
@@ -37,7 +51,12 @@ const getFhirResponse = async (req, res) => {
 	logger.debug(`Request path: ${JSON.stringify(req.path)}`);
 	logger.debug(`Request query parameters: ${JSON.stringify(req.query)}`);	
 	const response = await getFhirResponseFunc(req.path,req.query)
-	res.end(response); 
+	if(response) {
+		res.end(response);
+	} else {
+		res.status(500).end();
+		
+	}
 }
 
 
