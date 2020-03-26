@@ -18,6 +18,9 @@ const app = express();
 const options = {
 	limit: process.env.payLoadLimit,
 };
+
+let server;
+
 if (process.env.useTLS.toLowerCase() === 'true') {
 	const parentDir = path.resolve(process.cwd(), '');
 	logger.debug(`Current working dir: ${parentDir}`);
