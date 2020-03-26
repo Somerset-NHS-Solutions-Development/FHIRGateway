@@ -1,7 +1,7 @@
 {
   "name": "fhirgateway",
   "version": "1.0.0",
-  "description": "",
+  "description": "Security and Audit Gateway for FHIR Servers",
   "main": "server.js",
   "scripts": {
     "dev": "set NODE_ENV=development && nodemon src/server.js",
