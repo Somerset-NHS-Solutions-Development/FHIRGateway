@@ -7,15 +7,15 @@ const jwksClient = require('jwks-rsa');
 const audit = require('./auditlogger.js');
 const logger = require('./logger.js');
 
-async function getSigningKey(token) {	
+async function getSigningKey(token) {
 	return new Promise((resolve, reject) => {
 		const client = jwksClient({
-			strictSsl: true, // Default value			
+			strictSsl: true, // Default value
 			jwksUri: (process.env.jwksUri)
 		});
-		const decoded = jwt.decode(token, {complete: true});
+		const decoded = jwt.decode(token, { complete: true });
 		client.getSigningKey(decoded.header.kid, (err, key) => {
-			if(err) {
+			if (err) {
 				logger.error(err);
 				reject(err);
 			} else {
@@ -27,49 +27,46 @@ async function getSigningKey(token) {
 }
 
 module.exports = async (req, res, next) => {
-    try {
-		if(req.headers.authorization){
-        const token = req.headers.authorization.split(' ')[1]		
-		const signingKey = await getSigningKey(token);
-		const options = { ignoreExpiration: false, maxAge : '15m', algorithms: ['RS256'] };
-		const claimPath = process.env.AccessClaimPath;
-		jwt.verify(token, signingKey, options, (err, vdecoded) => {
-				if(err){
+	try {
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
+			const signingKey = await getSigningKey(token);
+			const options = { ignoreExpiration: false, maxAge: '15m', algorithms: ['RS256'] };
+			const claimPath = process.env.AccessClaimPath;
+			jwt.verify(token, signingKey, options, (err, vdecoded) => {
+				if (err) {
 					throw new Error('Unable to verify token');
 				}
 				req.userData = vdecoded;
 				req.userAccess = vdecoded[claimPath];
-				
-				// Check Roles at least one role is present 
+
+				// Check Roles at least one role is present
 				let found = 0;
-				if((process.env.AccessRolesAllowed).includes(',')) {
-					
+				if ((process.env.AccessRolesAllowed).includes(',')) {
 					(process.env.AccessRolesAllowed).split(',').forEach((item) => {
-						if(req.userAccess.indexOf(item.trim()) !== -1){
+						if (req.userAccess.indexOf(item.trim()) !== -1) {
 							found = 1;
 						}
 					});
-				} else if(req.userAccess.indexOf(process.env.AccessRolesAllowed.trim()) !== -1){
-							found = 1;
-					}
-				if(found === 0) {
+				} else if (req.userAccess.indexOf(process.env.AccessRolesAllowed.trim()) !== -1) {
+					found = 1;
+				}
+				if (found === 0) {
 					throw new Error(`Roles not found: ${JSON.stringify(vdecoded)}`);
 				}
-				
+
 				audit.info(`Audit Success: ${JSON.stringify(vdecoded)}`);
 			});
-        next();
+			next();
 		} else {
-			throw(new Error('Authorisation header not set.'))
+			throw (new Error('Authorisation header not set.'));
 		}
-        
-    } catch (err) {
+	} catch (err) {
 		audit.error(`Audit Failure: ${err}`);
 		logger.error(err);
-        res.status(401).json({
-			message: "Authorisation failed."
+		res.status(401).json({
+			message: 'Authorisation failed.'
 		});
 		res.end();
-    }
-}
-
+	}
+};
