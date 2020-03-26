@@ -7,6 +7,7 @@ const logger = require('./handlers/logger');
 // Express HTTP server
 const express = require('express');
 const helmet = require('helmet');
+const nocache = require('nocache');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require( 'fs' );
@@ -147,13 +148,13 @@ const helmetConfig = {
 	frameguard: {
 		action: 'deny'
 	},
-	hidePoweredBy: true,
-	noCache: true
+	hidePoweredBy: true
 };
 
 
 // Middleware
 app.use(helmet(helmetConfig));
+app.use(nocache());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
