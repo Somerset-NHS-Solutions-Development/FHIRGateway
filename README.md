@@ -10,8 +10,8 @@ This service does not check or validate the FHIR request is valid, this is handl
 
 ## Installation
     $ npm install
-    $ cp ./src/.env.TEMPLATE ./src/.env.devlopement
-    $ vim ./src/.env.devlopement
+    $ cp .env.TEMPLATE .env.development
+    $ vim .env.development
 
 Update config with appropriate values:
 
