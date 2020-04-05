@@ -1,0 +1,27 @@
+{
+	"env": {
+		"es6": true,
+		"node": true
+	},
+	"extends": ["airbnb-base"],
+	"parserOptions": {
+		"ecmaVersion": 2020,
+		"sourceType": "module"
+	},
+	"plugins": ["import", "json"],
+	"rules": {
+		"import/no-extraneous-dependencies": [
+			"error",
+			{
+				"devDependencies": true
+			}
+		],
+		"lines-between-class-members": "error",
+		"no-console": "off",
+		"prefer-destructuring": "off",
+		"indent": ["error", "tab"],
+		"no-tabs": "off",
+		"comma-dangle": "off"
+		
+	}
+}
