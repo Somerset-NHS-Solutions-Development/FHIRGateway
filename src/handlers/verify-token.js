@@ -7,15 +7,15 @@ const jwksClient = require('jwks-rsa');
 const audit = require('./auditlogger.js');
 const logger = require('./logger.js');
 
-async function getSigningKey(token) {	
+async function getSigningKey(token) {
 	return new Promise((resolve, reject) => {
 		const client = jwksClient({
-			strictSsl: true, // Default value			
+			strictSsl: true, // Default value
 			jwksUri: (process.env.jwksUri)
 		});
-		const decoded = jwt.decode(token, {complete: true});
+		const decoded = jwt.decode(token, { complete: true });
 		client.getSigningKey(decoded.header.kid, (err, key) => {
-			if(err) {
+			if (err) {
 				logger.error(err);
 				reject(err);
 			} else {
@@ -70,16 +70,14 @@ module.exports = async (req, res, next) => {
 			}
 			
 		} else {
-			throw(new Error('Authorisation header not set.'))
+			throw (new Error('Authorisation header not set.'));
 		}
-        
-    } catch (err) {
+	} catch (err) {
 		audit.error(`Audit Failure: ${err}`);
 		logger.error(err);
-        res.status(401).json({
-			message: "Authorisation failed."
+		res.status(401).json({
+			message: 'Authorisation failed.'
 		});
 		res.end();
-    }
-}
-
+	}
+};
