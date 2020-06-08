@@ -3,12 +3,16 @@
 		"es6": true,
 		"node": true
 	},
-	"extends": ["airbnb-base"],
+	"extends": [
+		"airbnb-base",
+		"plugin:promise/recommended",
+		"plugin:jsdoc/recommended"
+	],
 	"parserOptions": {
 		"ecmaVersion": 2020,
 		"sourceType": "module"
 	},
-	"plugins": ["import", "json"],
+	"plugins": ["import", "jsdoc", "json", "promise"],
 	"rules": {
 		"import/no-extraneous-dependencies": [
 			"error",
@@ -18,10 +22,16 @@
 		],
 		"lines-between-class-members": "error",
 		"no-console": "off",
+		"no-multiple-empty-lines": [
+			"error",
+			{
+				"max": 1,
+				"maxBOF": 0,
+				"maxEOF": 0
+			}
+		],
 		"prefer-destructuring": "off",
-		"indent": ["error", "tab"],
-		"no-tabs": "off",
-		"comma-dangle": "off"
-		
+		"promise/prefer-await-to-then": "warn",
+		"promise/prefer-await-to-callbacks": "warn"
 	}
 }
