@@ -7,6 +7,8 @@ const { execSync } = require('child_process');
 const express = require('express');
 const fs = require('fs');
 const helmet = require('helmet');
+const http = require('http');
+const https = require('https');
 const nocache = require('nocache');
 const path = require('path');
 
@@ -99,16 +101,15 @@ if (process.env.useTLS.toLowerCase() === 'true') {
 		options.cert = fs.readFileSync(certificate);
 		options.passphrase = 'password';
 		logger.debug(`Starting server with the following options: ${JSON.stringify(options)}`);
-		server = require('https').createServer(options, app);
+		server = https.createServer(options, app);
 	} else {
 		logger.error('Cert files not found');
 		process.exit(1);
 	}
 } else {
 	logger.debug(`Starting server with the following options: ${JSON.stringify(options)}`);
-	server = require('http').createServer(options, app);
+	server = http.createServer(options, app);
 }
-
 
 // Setup CORS
 let corsOptions = {};
@@ -147,14 +148,12 @@ const helmetConfig = {
 	hidePoweredBy: true,
 };
 
-
 // Middleware
 app.use(helmet(helmetConfig));
 app.use(nocache());
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
 
 // router
 
@@ -163,7 +162,6 @@ const fhir = require('./handlers/fhir');
 
 app.use('/auth', login);
 app.use('/', fhir);
-
 
 server.listen(process.env.listenOn, () => {
 	logger.info(`Platform: ${process.platform}`);

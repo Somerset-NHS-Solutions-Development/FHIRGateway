@@ -16,8 +16,8 @@ router.post('/login', (req, res) => {
 			password,
 			client_id: (process.env.openIDClientID),
 			grant_type: 'password',
-			client_secret: (process.env.openIDClientSecret)
-		}
+			client_secret: (process.env.openIDClientSecret),
+		},
 	};
 
 	request(options, (error, response, body) => {

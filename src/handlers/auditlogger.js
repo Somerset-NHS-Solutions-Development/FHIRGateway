@@ -20,7 +20,6 @@ const dailyRotateFileTransport = new transports.DailyRotateFile({
 	)
 });
 
-
 const logger = createLogger({
 	// change level if in dev environment versus production
 	level: 'info',

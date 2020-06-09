@@ -27,38 +27,37 @@ async function getSigningKey(token) {
 }
 
 module.exports = async (req, res, next) => {
-    try {
+	try {
 		const authMethods = process.env.EnabledAuthMethods.toLowerCase().split(',');
-		if(authMethods.indexOf('openid') !== -1 && req.headers.authorization){
-			const token = req.headers.authorization.split(' ')[1]		
+		if (authMethods.indexOf('openid') !== -1 && req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
 			const signingKey = await getSigningKey(token);
-			const options = { ignoreExpiration: false, maxAge : '15m', algorithms: ['RS256'] };
+			const options = { ignoreExpiration: false, maxAge: '15m', algorithms: ['RS256'] };
 			const claimPath = process.env.AccessClaimPath;
 			jwt.verify(token, signingKey, options, (err, vdecoded) => {
-					if(err){
-						throw new Error('Unable to verify token');
-					}
-					req.userData = vdecoded;
-					req.userAccess = vdecoded[claimPath];
-					
-					// Check Roles at least one role is present 
-					let found = 0;
-					if((process.env.AccessRolesAllowed).includes(',')) {
-						
-						(process.env.AccessRolesAllowed).split(',').forEach((item) => {
-							if(req.userAccess.indexOf(item.trim()) !== -1){
-								found = 1;
-							}
-						});
-					} else if(req.userAccess.indexOf(process.env.AccessRolesAllowed.trim()) !== -1){
-								found = 1;
+				if (err) {
+					throw new Error('Unable to verify token');
+				}
+				req.userData = vdecoded;
+				req.userAccess = vdecoded[claimPath];
+
+				// Check Roles at least one role is present
+				let found = 0;
+				if ((process.env.AccessRolesAllowed).includes(',')) {
+					(process.env.AccessRolesAllowed).split(',').forEach((item) => {
+						if (req.userAccess.indexOf(item.trim()) !== -1) {
+							found = 1;
 						}
-					if(found === 0) {
-						throw new Error(`Roles not found: ${JSON.stringify(vdecoded)}`);
-					}
-					
-					audit.info(`Audit Success: ${JSON.stringify(vdecoded)}`);
-				});
+					});
+				} else if (req.userAccess.indexOf(process.env.AccessRolesAllowed.trim()) !== -1) {
+					found = 1;
+				}
+				if (found === 0) {
+					throw new Error(`Roles not found: ${JSON.stringify(vdecoded)}`);
+				}
+
+				audit.info(`Audit Success: ${JSON.stringify(vdecoded)}`);
+			});
 			next();
 		} else if (authMethods.indexOf('xapikey') !== -1 && req.headers['x-api-key']) {
 			const xapikeys = process.env.XApiKeysPermitted.toLowerCase().split(',');
@@ -68,7 +67,6 @@ module.exports = async (req, res, next) => {
 			} else {
 				throw new Error(`X-API-Key Failure: Key not permitted ${req.headers['X-API-Key']}`);
 			}
-			
 		} else {
 			throw (new Error('Authorisation header not set.'));
 		}

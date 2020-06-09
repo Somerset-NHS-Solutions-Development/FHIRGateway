@@ -32,6 +32,10 @@
 		],
 		"prefer-destructuring": "off",
 		"promise/prefer-await-to-then": "warn",
-		"promise/prefer-await-to-callbacks": "warn"
+		"promise/prefer-await-to-callbacks": "warn",
+
+		"indent": ["error", "tab"],
+		"no-tabs": "off",
+		"comma-dangle": "off"
 	}
 }
