@@ -7,15 +7,19 @@ const jwksClient = require('jwks-rsa');
 const audit = require('./auditlogger.js');
 const logger = require('./logger.js');
 
-async function getSigningKey(token) {
+const apiKeys = process.env.apiKeys.split(',').map(a => {
+  return a.trim();
+});
+
+async function getSigningKey(token) {	
 	return new Promise((resolve, reject) => {
 		const client = jwksClient({
-			strictSsl: true, // Default value
+			strictSsl: true, // Default value			
 			jwksUri: (process.env.jwksUri)
 		});
-		const decoded = jwt.decode(token, { complete: true });
+		const decoded = jwt.decode(token, {complete: true});
 		client.getSigningKey(decoded.header.kid, (err, key) => {
-			if (err) {
+			if(err) {
 				logger.error(err);
 				reject(err);
 			} else {
@@ -26,11 +30,18 @@ async function getSigningKey(token) {
 	});
 }
 
+
 module.exports = async (req, res, next) => {
     try {
-		const authMethods = process.env.EnabledAuthMethods.toLowerCase().split(',');
-		if(authMethods.indexOf('openid') !== -1 && req.headers.authorization){
-			const token = req.headers.authorization.split(' ')[1]		
+		if(!req.headers.authorization && !req.headers['x-api-key'] ) {
+			throw new Error("No authorization headers found");		
+		}
+		if(req.headers.authorization){
+			logger.debug(`Authorization Header found : ${req.headers.authorization}`);
+			const token = req.headers.authorization.split(' ')[1];
+			if(token.length < 10) {
+				throw new Error(`Invalid token length: ${req.headers.authorization}`);
+			}
 			const signingKey = await getSigningKey(token);
 			const options = { ignoreExpiration: false, maxAge : '15m', algorithms: ['RS256'] };
 			const claimPath = process.env.AccessClaimPath;
@@ -60,24 +71,28 @@ module.exports = async (req, res, next) => {
 					audit.info(`Audit Success: ${JSON.stringify(vdecoded)}`);
 				});
 			next();
-		} else if (authMethods.indexOf('xapikey') !== -1 && req.headers['x-api-key']) {
-			const xapikeys = process.env.XApiKeysPermitted.toLowerCase().split(',');
-			if (xapikeys.indexOf(req.headers['x-api-key']) !== -1) {
-				audit.info(`Audit Success: X-API-Key ${req.headers['X-API-Key']}`);
+		} 		
+		
+		if(req.headers['x-api-key'] && process.env.xAPIKeyEnabled.toLowerCase() === 'true') {
+			logger.info(JSON.stringify(apiKeys));
+			const apiKey = req.headers['x-api-key'].trim();
+			if(apiKey.length == 36 && apiKeys.indexOf(apiKey) > -1){
+				audit.info(`Audit Success: X-API-KEY ${apiKey}`);
 				next();
+				return;
 			} else {
-				throw new Error(`X-API-Key Failure: Key not permitted ${req.headers['X-API-Key']}`);
+				throw new Error(`API Key not valid ${apiKey}`);
 			}
-			
-		} else {
-			throw (new Error('Authorisation header not set.'));
 		}
-	} catch (err) {
+		
+        
+    } catch (err) {
 		audit.error(`Audit Failure: ${err}`);
 		logger.error(err);
-		res.status(401).json({
-			message: 'Authorisation failed.'
+        res.status(401).json({
+			message: "Authorisation failed."
 		});
 		res.end();
-	}
-};
+    }
+}
+
