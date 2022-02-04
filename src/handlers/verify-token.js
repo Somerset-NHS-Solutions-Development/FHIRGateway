@@ -72,7 +72,9 @@ module.exports = async (req, res, next) => {
 				});
 			next();
 		} 		
-		
+		if (req.headers['x-api-key'] && process.env.xAPIKeyEnabled.toLowerCase() === 'false') {
+			throw new Error(`Use of API Keys not enabled`);
+		}
 		if(req.headers['x-api-key'] && process.env.xAPIKeyEnabled.toLowerCase() === 'true') {
 			logger.info(JSON.stringify(apiKeys));
 			const apiKey = req.headers['x-api-key'].trim();
