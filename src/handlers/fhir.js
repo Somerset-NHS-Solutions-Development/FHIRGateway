@@ -1,8 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser')
-const router = express.Router()
-const rp = require('request-promise');
+const bodyParser = require('body-parser');
+const router = express.Router();
 const verifyToken = require('./verify-token');
+const urlparse = require('url');
 
 // Set Up Logging
 const logger = require('./logger');
@@ -35,7 +35,26 @@ function getFhirResponseFunc(path = '/', queryString, rmethod,rheaders,rbody) {
 	if(rmethod == 'PUT' || rmethod == 'POST') {
 		options['body'] = JSON.stringify(rbody);
 	}
-	return rp(options)
+	return new Promise((resolve, reject) => {
+		const reqs = https.request(process.env.openIDDirectAccessEnpoint, options, (ress) => {
+			ress.setEncoding('utf8');
+			let data = '';
+			ress.on('data', (chunk) => {
+				data += chunk;
+			});
+			ress.on('end', () => {
+				return resolve(ress);
+			});
+		});
+	
+		reqs.on('error', (e) => {
+			return reject('Error exchanging token: ' + JSON.stringify(e, null, 4));
+		});
+	
+		reqs.write(formData);
+	
+		reqs.end();
+	});
 }
 
 const getFhirResponse = async (req,res,next) => {
@@ -46,8 +65,10 @@ const getFhirResponse = async (req,res,next) => {
 	logger.debug(`Request Content Type: ${req.header('content-type')}`);
 	logger.debug(`Request raw body ${req.rawBody}`)
 	logger.debug(`Request parsed body ${req.body}`)
+
+	const q = urlparse = parse(req.url).query;
 	
-	const response = await getFhirResponseFunc(req.path,req.query, req.method, req.headers, req.body)
+	const response = await getFhirResponseFunc(req.path, q, req.method, req.headers, req.body)
 	res.end(response); 	
 	next;
 }
