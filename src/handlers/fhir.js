@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const router = express.Router();
 const verifyToken = require('./verify-token');
 const urlparse = require('url');
+const https = require('https');
 
 // Set Up Logging
 const logger = require('./logger');
@@ -32,16 +33,11 @@ function getFhirResponseFunc(path = '/', queryString, rmethod,rheaders,rbody) {
 			
 		}
 	};
-	if(rmethod == 'PUT' || rmethod == 'POST') {
-		options['body'] = JSON.stringify(rbody);
-	}
+	// if(rmethod == 'PUT' || rmethod == 'POST') {
+	// 	options['body'] = JSON.stringify(rbody);
+	// }
 	return new Promise((resolve, reject) => {
 		const reqs = https.request(process.env.openIDDirectAccessEnpoint, options, (ress) => {
-			ress.setEncoding('utf8');
-			let data = '';
-			ress.on('data', (chunk) => {
-				data += chunk;
-			});
 			ress.on('end', () => {
 				return resolve(ress);
 			});
@@ -51,7 +47,7 @@ function getFhirResponseFunc(path = '/', queryString, rmethod,rheaders,rbody) {
 			return reject('Error exchanging token: ' + JSON.stringify(e, null, 4));
 		});
 	
-		reqs.write(formData);
+		reqs.write(JSON.stringify(rbody));
 	
 		reqs.end();
 	});
